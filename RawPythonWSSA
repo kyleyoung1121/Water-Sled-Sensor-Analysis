@@ -1,0 +1,52 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+data = pd.read_csv("DOC001.csv")
+data.describe()
+data = data[data["Inside-Temp"] != -999]
+data = data[data["Out-Temp"] != 999]
+data.describe()
+data["Out-Temp"].plot()
+data["Inside-Temp"].plot(x=data["Time"])
+data["Depth"].plot(x=data["Time"])
+data["Pressure"].plot(x=data["Time"])
+data["Altitude"].plot(x=data["Time"])
+dataRGB = data.loc[:,["Red","Green","Blue"]]
+dataRGB['Red'].values[data['Red'] > 1020] = 1020
+dataRGB['Green'].values[data['Green'] > 1020] = 1020
+dataRGB['Blue'].values[data['Blue'] > 1020] = 1020
+dataRGBdiv4 = data.loc[:,["Red","Green","Blue"]]
+dataRGBdiv4 = (dataRGBdiv4 - (dataRGBdiv4 % 4))/4
+dataRGB = dataRGBdiv4.astype(int)
+subset = dataRGB[['Red', 'Green', 'Blue']]
+tuples = []
+tuples = [tuple(x) for x in subset.values]
+dataRGB = dataRGB[dataRGB["Red"] > 0]
+dataRGB = dataRGB[dataRGB["Green"] > 0]
+dataRGB = dataRGB[dataRGB["Blue"] > 0]
+dataRGB.plot(color = ['r','g','b'])
+dataRGBcombo = data["Red"]+data["Green"]+data["Blue"]
+dataRGBcombo = dataRGBcombo[1:31]
+dataRGBcombo.columns = ['TotalRGB']
+dataRGBcombo.plot.bar(color=([0,1,1]),title=("Total RGB value (intensity)"))
+hex = []
+for i in range(len(tuples)):
+    a = '#%02x%02x%02x' % tuples[i]
+    hex.append(a)
+
+pos = len(tuples)
+barWidth = 1 
+fig, ax = plt.subplots(figsize=(10,5))
+i = 0 
+while (i < pos):
+    plt.bar((i), 20, width=barWidth, alpha=1, color=(hex[i])) 
+    i = i + 1
+
+ax.set_ylabel('RGB')
+ax.set_title('RGB over time')
+ax.set_xticks([len(tuples)/4,len(tuples)/2,(3*len(tuples)/4),26.5])
+
+plt.xlim([0,len(tuples)])
+plt.ylim([0,20])
+
+plt.show()
