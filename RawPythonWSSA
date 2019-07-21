@@ -46,7 +46,7 @@ ax.set_ylabel('RGB')
 ax.set_title('RGB over time')
 ax.set_xticks([len(tuples)/4,len(tuples)/2,(3*len(tuples)/4),26.5])
 
-plt.xlim([0,len(tuples)])
+plt.xlim([0,len(tuples)-.5])
 plt.ylim([0,20])
 
 plt.show()
